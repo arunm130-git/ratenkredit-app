@@ -38,7 +38,7 @@ class LoanOfferController
 
                 case 'Smava':
                     // TODO: Use consistent approach across the project for fetching API details
-                    $smavaSettings = $this->config['s_mava_settings'];
+                    $smavaSettings = $this->config['smava_settings'];
 
                     // TODO: Implement parallel CURL requests
                     $curl = curl_init();
@@ -90,6 +90,7 @@ class LoanOfferController
 
         return true;
     }
+
     private function sendErrorResponse(string $errorMessage, int $errorCode = 400)
     {
         // TODO: Move response handling to a ResponseHelper or use a Response object
