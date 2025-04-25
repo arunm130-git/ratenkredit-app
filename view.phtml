@@ -30,7 +30,7 @@
 
 <h2>Ratenkredit</h2>
 
-<form>
+<form method="post" action="/">
     <input type="text" name="amount" value="<?=@$_GET['amount'] ?>" placeholder="$100">
     <input type="submit" name="submit" value="Check" />
 </form>
@@ -44,7 +44,7 @@
     <?php foreach ($offers as $provider => $offer) { ?>
     <tr>
         <td><?= $provider ?></td>
-        <td><?php if (($provider) == 'ing-diba') echo $offer['zinsen']; else { echo $offers[$provider]['Interest']; } ?>%</td>
+        <td><?php if (($provider) == 'ing-diba') echo $offer['zinsen'] . '%'; else { echo $offer['Interest']; } ?></td>
         <td><?php if ($provider == 'ing-diba') echo $offer['duration']; else { echo $offer['Terms']['Duration']; } ?> month</td>
     </tr>
     <?php } ?>
