@@ -3,6 +3,9 @@
 use App\Controllers\LoanOfferController;
 use App\Factories\LoanProviderFactory;
 use App\Services\ConfigurationService;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
+use Symfony\Component\HttpFoundation\Request;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
@@ -13,12 +16,16 @@ switch ($uri) {
         $config = new ConfigurationService();
         $loanProviderFactory = new LoanProviderFactory();
 
-        $controller = new LoanOfferController($config, $loanProviderFactory);
+        $loader = new FilesystemLoader(__DIR__ . '/../templates');
+        $twig = new Environment($loader);
+
+        $controller = new LoanOfferController($config, $loanProviderFactory, $twig);
 
         if ($method === 'POST') {
-            $controller->fetchLoanOffers();
+            $request = Request::createFromGlobals();
+            $controller->fetchLoanOffers($request);
         } elseif ($method === 'GET') {
-            include __DIR__ . '/../view.phtml';
+            echo $twig->render('loan_offer_dashboard.html.twig');
         } else {
             http_response_code(405);
             echo json_encode(['error' => 'Method Not Allowed']);

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Offers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-style: italic;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Ratenkredit</h2>
+
+{% if error is not empty %}
+    <div class="errors">
+        {% for err in error %}
+            <div class="error">{{ err }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="form-container">
+    <form method="post" action="/">
+        <input type="text" name="amount" value="{{ request.amount ?? '' }}" placeholder="Loan amount in Dollars">
+        <input type="text" name="month" value="{{ request.month ?? '' }}" placeholder="Duration of loan in months">
+        <input type="submit" name="submit" value="Check" />
+    </form>
+</div>
+
+{% if offers %}
+    <h3>Loan Offers</h3>
+    <table>
+        <tr>
+            <th>Loan Provider</th>
+            <th>Interest (%)</th>
+            <th>Duration (Months)</th>
+        </tr>
+        {% for provider, offer in offers %}
+            <tr>
+                <td>{{ provider }}</td>
+                <td>{{ offer.interest }}%</td>
+                <td>{{ offer.duration }} months</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+</body>
+</html>
