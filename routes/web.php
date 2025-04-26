@@ -1,15 +1,19 @@
 <?php
 
 use App\Controllers\LoanOfferController;
-
-$config = require_once __DIR__ . '/../config/config.php';
+use App\Factories\LoanProviderFactory;
+use App\Services\ConfigurationService;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($uri) {
     case '/':
-        $controller = new LoanOfferController($config);
+        // TODO: Inject services instead of instantiating here
+        $config = new ConfigurationService();
+        $loanProviderFactory = new LoanProviderFactory();
+
+        $controller = new LoanOfferController($config, $loanProviderFactory);
 
         if ($method === 'POST') {
             $controller->fetchLoanOffers();

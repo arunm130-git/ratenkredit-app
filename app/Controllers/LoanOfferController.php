@@ -2,68 +2,40 @@
 
 namespace App\Controllers;
 
-class LoanOfferController
+use App\Factories\LoanProviderFactory;
+use App\Services\ConfigurationServiceInterface;
+
+readonly class LoanOfferController
 {
-    public function __construct(private $config)
+    public function __construct(
+        private ConfigurationServiceInterface $config,
+        private LoanProviderFactory $providerFactory
+    )
     {
     }
+
     public function fetchLoanOffers(): void
     {
         if (!$this->validateRequest()) {
             return;
         }
 
-        $amount = $_POST['amount'];
+        $request = $_POST;
         $offers = [];
 
-        $loanProviders = $this->config['loan_providers'];
+        $loanProviders = $this->config->get('loan_providers');
 
-
-        // TODO: Move business logic to services
-        foreach ($loanProviders as $provider) {
-            switch ($provider) {
-                // TODO: Use Factories for different providers
-                case 'ing-diba':
-                    $ingDibaSettings = $this->config['ing_diba_settings'];
-
-                    $response = file_get_contents($ingDibaSettings['url'], false, stream_context_create([
-                        "http" => [
-                            "method" => "GET",
-                            "header" => 'X-Access-key: ' . $ingDibaSettings['access_token']
-                        ]
-                    ]));
-
-                    $offers[$provider] = json_decode($response, true);
-                    break;
-
-                case 'Smava':
-                    // TODO: Use consistent approach across the project for fetching API details
-                    $smavaSettings = $this->config['smava_settings'];
-
-                    // TODO: Implement parallel CURL requests
-                    $curl = curl_init();
-                    curl_setopt_array($curl, array(
-                        CURLOPT_RETURNTRANSFER => 1,
-                        CURLOPT_URL => $smavaSettings['url'],
-                        // TODO: Remove these comments and handle both cases
-                        /*post does not work with mock server CURLOPT_POST => 1,
-                        CURLOPT_POSTFIELDS => array(
-                            'month' => 3,
-                            'loan' => $_GET['amount']
-                        ),*/
-                        CURLOPT_HTTPHEADER => [
-                            'X-access-key: ' . $smavaSettings['access_token'],
-                        ]
-                    ));
-
-                    // TODO: Add error handling for curl_exec and log failures
-                    $offers[$provider] = json_decode(curl_exec($curl), true);
-                    curl_close($curl);
-                    break;
+        try {
+            foreach ($loanProviders as $provider) {
+                $service = $this->providerFactory->make($provider);
+                $offers[$provider] = $service->fetchLoanOffers($request);
             }
 
+            include(dirname(__FILE__) . '/../../view.phtml');
+        } catch (\Exception $e) {
+            var_dump($e);
         }
-        include(dirname(__FILE__).'/../../view.phtml');
+
     }
 
     private function validateRequest(): bool
