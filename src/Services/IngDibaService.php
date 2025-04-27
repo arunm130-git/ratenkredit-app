@@ -3,73 +3,53 @@
 namespace App\Services;
 
 use App\Traits\LoanOfferFormatter;
-use InvalidArgumentException;
+use GuzzleHttp\Client;
 
-class IngDibaService implements ProviderServiceInterface
+readonly class IngDibaService implements ProviderServiceInterface
 {
     use LoanOfferFormatter;
 
     public function __construct(
         private ConfigurationServiceInterface $config,
-    ) {}
+        private Client $client,
+    ) {
+    }
 
     public function fetchLoanOffers(array $parameters): array
     {
-        $this->validateRequest($parameters);
-
         $response = $this->sendRequest($parameters);
-
-        if (!is_array($response)) {
-            return [];
-        }
-
         return $this->validateAndFormatResponse($response);
     }
 
-    private function validateRequest(array $parameters): void
-    {
-        if (!isset($parameters['amount']) || !is_numeric($parameters['amount'])) {
-            throw new InvalidArgumentException('Invalid loan amount provided.');
-        }
-    }
-
-    private function sendRequest(array $parameters): mixed
-    {
-        $curl = curl_init();
-        $curlOptions = $this->getCurlOptions($parameters);
-
-        curl_setopt_array($curl, $curlOptions);
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        return json_decode($response, true);
-    }
-
-    private function getCurlOptions(array $parameters): array
+    private function sendRequest(array $parameters): array
     {
         $ingDibaSettings = $this->config->get('ing_diba_settings');
 
-        return [
-            CURLOPT_URL => $ingDibaSettings['url'] . $parameters['amount'],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                'X-Access-key: ' . $ingDibaSettings['access_token'],
+        // Add amount parameter value to ing-diba endpoint
+        $url = $ingDibaSettings['url'] . $parameters['amount'];
+
+        $response = $this->client->request('GET', $url, [
+            'headers' => [
+                'X-Access-key' => $ingDibaSettings['access_token'],
             ],
-        ];
+            'timeout' => 10,
+        ]);
+
+        // TODO: Throw custom exceptions on API failures
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     private function validateAndFormatResponse(array $response): array
     {
-        $offer = [];
-
+        // Ensure that required fields exist in the response
         if (isset($response['zinsen'], $response['duration'])) {
-            $offer = [
+            return [
                 'interest' => $this->formatInterest($response['zinsen']),
                 'duration' => $this->formatDuration($response['duration']),
             ];
         }
 
-        return $offer;
+        throw new \Exception('Invalid API response format from ING DiBa : ' . json_encode($response));
     }
 }

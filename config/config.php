@@ -23,7 +23,18 @@ return [
             'https://api.jsonbin.io/v3/b/65a6e71e1f5677401f1ebd2c?meta=false',
         'access_token' => $_ENV['SMAVA_ACCESS_TOKEN'] ?? 'API-ACCESS-TOKEN',
 
-        // Use POST in production, GET for mock/testing
+        // Use GET method in non-production environments as the mock server does not support POST requests
         'method' => ($_ENV['APP_ENV'] ?? 'local') === 'production' ? 'POST' : 'GET'
     ],
+
+    'loan_constraints' => [
+        'amount' => [
+            'min' => $_ENV['MIN_LOAN_AMOUNT'] ?? 100,
+            'max' => $_ENV['MAX_LOAN_AMOUNT'] ?? 99999999,
+        ],
+        'duration' => [
+            'min' => $_ENV['MIN_LOAN_DURATION'] ?? 1,
+            'max' => $_ENV['MAX_LOAN_DURATION'] ?? 480,
+        ]
+    ]
 ];
