@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Traits\LoanOfferFormatter;
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
 readonly class IngDibaService implements ProviderServiceInterface
 {
@@ -11,7 +11,7 @@ readonly class IngDibaService implements ProviderServiceInterface
 
     public function __construct(
         private ConfigurationServiceInterface $config,
-        private Client $client,
+        private ClientInterface $client,
     ) {
     }
 

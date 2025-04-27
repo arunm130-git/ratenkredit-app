@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Traits\LoanOfferFormatter;
-use GuzzleHttp\Client;
-use InvalidArgumentException;
+use GuzzleHttp\ClientInterface;
 
 class SmavaService implements ProviderServiceInterface
 {
@@ -12,7 +11,7 @@ class SmavaService implements ProviderServiceInterface
 
     public function __construct(
         private readonly ConfigurationServiceInterface $config,
-        private readonly Client $client
+        private readonly ClientInterface $client
     ) {}
 
     public function fetchLoanOffers(array $parameters): array
