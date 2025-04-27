@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error {{ status_code }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        .error-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .error-details {
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        .error-container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="error-container">
+    <div class="error-message">
+        {% if status_code == 404 %}
+            Sorry, the page you are looking for could not be found.
+        {% elseif status_code == 405 %}
+            Sorry, the HTTP method used is not allowed for this endpoint.
+        {% else %}
+            An error occurred. Please try again later.
+        {% endif %}
+    </div>
+
+    <div class="error-details">
+        {% if status_code == 404 %}
+            The requested URL was not found on this server.
+        {% elseif status_code == 405 %}
+            Please check if you are using the correct HTTP method (GET, POST, etc.).
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

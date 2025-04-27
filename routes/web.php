@@ -12,18 +12,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
+$twig = initializeTwigService();
 
 // Define routes
 switch ($uri) {
     case '/':
         if ($method === 'GET') {
-            $twig = initializeTwigService();
 
             // Render the dashboard template
             echo $twig->render('loan_offer_dashboard.html.twig');
         } else {
             // Handle unsupported HTTP Methods
-            sendJsonResponse(405, ['error' => 'Method Not Allowed']);
+            echo $twig->render('error.html.twig', [
+                'status_code' => 405
+            ]);
         }
         break;
 
@@ -37,16 +39,19 @@ switch ($uri) {
             $controller->fetchLoanOffers($request);
         } else {
             // Handle unsupported HTTP Methods
-            sendJsonResponse(405, ['error' => 'Method Not Allowed']);
+            echo $twig->render('error.html.twig', [
+                'status_code' => 405
+            ]);
         }
         break;
 
     default:
-        sendJsonResponse(404, ['error' => 'Route not found']);
+        echo $twig->render('error.html.twig', [
+            'status_code' => 404
+        ]);
         break;
 }
 
-// Function to create the LoanOfferController instance
 function createLoanOfferController(): LoanOfferController
 {
     $config = new ConfigurationService();
@@ -57,24 +62,15 @@ function createLoanOfferController(): LoanOfferController
     return new LoanOfferController($config, $loanProviderFactory, $twig, $logger);
 }
 
-// Function to initialize the Twig service
 function initializeTwigService(): Environment
 {
     $loader = new FilesystemLoader(__DIR__ . '/../templates');
     return new Environment($loader);
 }
 
-// Function to initialize the Logger service
 function initializeLogger(): Logger
 {
     $logger = new Logger('app');
     $logger->pushHandler(new StreamHandler(__DIR__ . '/../app.log'));
     return $logger;
-}
-
-// Function to send JSON responses with status codes
-function sendJsonResponse(int $statusCode, array $data): void
-{
-    http_response_code($statusCode);
-    echo json_encode($data);
 }
