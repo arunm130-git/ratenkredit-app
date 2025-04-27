@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-
 readonly class LoanOfferController
 {
     public function __construct(
@@ -36,13 +35,11 @@ readonly class LoanOfferController
                 $service = $this->providerFactory->make($provider);
                 $offers[$provider] = $service->fetchLoanOffers($request->request->all());
             }
-
         } catch (InvalidArgumentException $e) {
             // Clear fetched offers in case of an error to avoid inconsistent/partial data
             $offers = [];
             $errors[] = $e->getMessage();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error fetching loan offers: " . $e->getMessage());
 
             $offers = [];

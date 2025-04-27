@@ -12,7 +12,8 @@ class SmavaService implements ProviderServiceInterface
     public function __construct(
         private readonly ConfigurationServiceInterface $config,
         private readonly ClientInterface $client
-    ) {}
+    ) {
+    }
 
     public function fetchLoanOffers(array $parameters): array
     {

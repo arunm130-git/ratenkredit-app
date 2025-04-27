@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Controllers\LoanOfferController;
 use App\Factories\LoanProviderFactory;
 use App\Services\ConfigurationService;
@@ -18,7 +17,6 @@ $twig = initializeTwigService();
 switch ($uri) {
     case '/':
         if ($method === 'GET') {
-
             // Render the dashboard template
             echo $twig->render('loan_offer_dashboard.html.twig');
         } else {
