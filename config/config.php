@@ -1,15 +1,8 @@
 <?php
 
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
-
 return [
-    'loan_providers' => [
-        'ing-diba',
-        'Smava',
-    ],
+    // Fetch and format the providers from .env
+    'loan_providers' => explode(',', $_ENV['LOAN_PROVIDERS'] ?? 'ing-diba,Smava'),
 
     'ing_diba_settings' => [
         'url' => $_ENV['ING_DIBA_API_ENDPOINT'] ??
