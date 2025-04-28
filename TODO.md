@@ -66,6 +66,9 @@ This document outlines a series of improvements and features that could be added
 - **CI:**
      - Integrate with CI tools like **GitHub Actions** to automate the testing pipeline.
      - **Run tests, PHPStan, and code style checks (e.g., PHP-CS-Fixer)** on each commit to ensure code quality and correctness.
+## 9. **Code Quality & Type Safety Improvements**
+- **Add Explicit Types to Arrays:**
+    - Use more specific array types such as `array<string, int>` instead of just `array`. This improves type safety and makes the code more predictable and easier to maintain.
 
 ---
 
