@@ -53,20 +53,19 @@ This document outlines a series of improvements and features that could be added
      - Introduce pagination to limit the number of loan offers displayed at once. This is particularly useful when the list of loan offers becomes large.
      - Allow users to navigate through pages of offers, which will improve the UI performance and usability.
 
-## 6. **Configuration Management**
-   - **Centralized Configuration Service:**
-     - As the configuration grows more complex (e.g., multiple API configurations), abstract configuration handling into a **Configuration Service**.
-     - This service would be responsible for loading and managing configuration settings, making it easier to maintain and extend the configuration structure.
-
-## 8. **Testing**
+## 6. **Testing**
    - **Test Coverage:**
      - Implement integration tests
      - Increase unit test coverage to ensure all components of the system work as expected.
 
-## 9. **Documentation & Developer Experience**
+## 7. **Documentation & Developer Experience**
    - **API Documentation:**
      - Generate and maintain clear API documentation, using tools like **Swagger** or **OpenAPI**
 
+## 8. **Continuous Integration (CI)**
+- **CI:**
+     - Integrate with CI tools like **GitHub Actions** to automate the testing pipeline.
+     - **Run tests, PHPStan, and code style checks (e.g., PHP-CS-Fixer)** on each commit to ensure code quality and correctness.
 
 ---
 

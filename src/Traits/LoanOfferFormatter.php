@@ -21,16 +21,16 @@ trait LoanOfferFormatter
         throw new InvalidArgumentException('Invalid interest format: ' . $interest);
     }
 
-    protected function formatDuration(string $duration): string
+    protected function formatDuration(string $duration): int
     {
         if (is_numeric($duration)) {
-            return $duration;
+            return (int) $duration;
         }
 
-        $duration = \DateInterval::createFromDateString($duration);
+        $durationInterval = \DateInterval::createFromDateString($duration);
 
-        if (isset($duration->y, $duration->m)) {
-            return $duration->y * 12 + $duration->m;
+        if (isset($durationInterval->y, $durationInterval->m)) {
+            return (int) ($durationInterval->y * 12 + $durationInterval->m);
         }
 
         throw new InvalidArgumentException('Invalid duration format: ' . $duration);
